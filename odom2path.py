@@ -2,13 +2,14 @@ import glob
 import os
 import csv
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class odom2path:
     def __init__(self):       
         self.directory = r'C:\Users\kwang\Git\odom2path'
         self.filename = r'C:\Users\kwang\Git\odom2path\data.txt'
-        self.seperator = '\t'
+        self.seperator = ',' #'\t'
         
         self.output = []
 
@@ -16,9 +17,10 @@ class odom2path:
         data = []
                 
         with open(filename, 'r') as f:
-            csvreader = csv.reader(f, delimiter=self.seperator, quoting=csv.QUOTE_NONNUMERIC)
+            csvreader = csv.reader(f, delimiter=self.seperator)
             for row in csvreader:
                 data.append(row)
+        
         
         return data
     
@@ -36,10 +38,13 @@ class odom2path:
                 
         x = []
         y = []
-        for row in data:
-            x.append(row[0])
-            y.append(row[1])
+        for row in data[1:]:            
+            x.append(row[6])
+            y.append(row[7])
         plt.plot(x, y)
+        
+        plt.xticks(np.arange(-2, 2, 0.1))
+        plt.yticks(np.arange(-2, 2, 0.1))        #plt.axis([0.0, 3.0, 0.0, 3.0])
         plt.show()
             
     def visualize_multi(self, dataset, save):
@@ -56,6 +61,8 @@ class odom2path:
             x.clear()
             y.clear()
         
+        plt.xticks(np.arange(-2, 2, 0.1))
+        plt.yticks(np.arange(-2, 2, 0.1))
         plt.show()
     
     def convertFolderGroup(self, directory):
@@ -78,8 +85,8 @@ class odom2path:
         for key, datas in dataset.items():
             for data in datas:
                 for row in data:
-                    x.append(row[0])
-                    y.append(row[1])
+                    x.append(row[6])
+                    y.append(row[7])
             plt.plot(x, y, label=key)
             x.clear()
             y.clear()
@@ -90,11 +97,11 @@ class odom2path:
         
 
 converter = odom2path()
-# data = converter.convertFile(r'C:\Users\kwang\Git\odom2path\data/1.txt')
+# data = converter.convertFile(r'C:\Users\kwang\desktop/bag_4.csv')
 # converter.visualize(data, save=False)
 
-# dataset = converter.convertFolder(r'C:\Users\kwang\Git\odom2path\data')
-# converter.visualize_multi(dataset, save=False)
+dataset = converter.convertFolder(r'C:\Users\kwang\desktop/bag')
+converter.visualize_multi(dataset, save=False)
 
-dataset = converter.convertFolderGroup(r'C:\Users\kwang\Git\odom2path\data')
-converter.visualize_group(dataset, save=False)
+# dataset = converter.convertFolderGroup(r'C:\Users\kwang\Git\odom2path\data')
+# converter.visualize_group(dataset, save=False)
